@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Lesson: Descriptive Statistics</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        nav {
+            background: #f8f9fa;
+            padding: 15px;
+            border-bottom: 2px solid #e9ecef;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        nav button {
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        nav button:hover, nav button.active {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #764ba2;
+            margin: 25px 0 15px 0;
+            font-size: 1.5em;
+        }
+
+        .concept-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .formula {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .exercise {
+            background: #e7f3ff;
+            border: 2px solid #2196F3;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 10px;
+        }
+
+        .exercise h4 {
+            color: #2196F3;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button.check-btn, button.submit-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        button.check-btn:hover, button.submit-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .interactive-chart {
+            margin: 30px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .data-input-area {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .stats-output {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #667eea;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card h4 {
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .tip {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .tip strong {
+            color: #856404;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .example {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            nav ul {
+                flex-direction: column;
+            }
+
+            nav button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Descriptive Statistics</h1>
+            <p>Interactive Lesson on Data Analysis</p>
+        </header>
+
+        <nav>
+            <ul>
+                <li><button onclick="showSection('intro')" class="active">Introduction</button></li>
+                <li><button onclick="showSection('preparation')">Data Preparation</button></li>
+                <li><button onclick="showSection('presentation')">Data Presentation</button></li>
+                <li><button onclick="showSection('central')">Central Tendency</button></li>
+                <li><button onclick="showSection('dispersion')">Dispersion</button></li>
+                <li><button onclick="showSection('software')">Statistical Software</button></li>
+                <li><button onclick="showSection('final')">Final Quiz</button></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <!-- Introduction Section -->
+            <div id="intro" class="section active">
+                <h2>Welcome to Descriptive Statistics!</h2>
+                
+                <div class="concept-box">
+                    <h3>What is Descriptive Statistics?</h3>
+                    <p>Descriptive statistics are methods used to summarize and describe the main features of a dataset. They provide simple summaries about the sample and measures, helping us understand patterns and trends in data.</p>
+                </div>
+
+                <h3>Learning Objectives</h3>
+                <ul style="margin-left: 20px; margin-top: 15px; line-height: 2;">
+                    <li>✓ Understand how to prepare and clean data for analysis</li>
+                    <li>✓ Create effective tabular and graphical presentations</li>
+                    <li>✓ Calculate and interpret measures of central tendency</li>
+                    <li>✓ Calculate and interpret measures of dispersion</li>
+                    <li>✓ Use statistical software for data analysis</li>
+                </ul>
+
+                <div class="tip">
+                    <strong>💡 Study Tip:</strong> Work through each section sequentially and complete all exercises. The concepts build on each other!
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar" style="width: 0%">0%</div>
+                </div>
+            </div>
+
+            <!-- Data Preparation Section -->
+            <div id="preparation" class="section">
+                <h2>1. Data Preparation</h2>
+
+                <div class="concept-box">
+                    <h3>Why Data Preparation Matters</h3>
+                    <p>Data preparation is the process of cleaning, organizing, and transforming raw data into a format suitable for analysis. Quality analysis requires quality data!</p>
+                </div>
+
+                <h3>Key Steps in Data Preparation</h3>
+                
+                <div class="example">
+                    <h4>1. Data Collection</h4>
+                    <p>Gather data from reliable sources (surveys, experiments, databases, etc.)</p>
+                </div>
+
+                <div class="example">
+                    <h4>2. Data Cleaning</h4>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Remove duplicates</li>
+                        <li>Handle missing values (deletion, imputation)</li>
+                        <li>Correct errors and inconsistencies</li>
+                        <li>Remove outliers (when appropriate)</li>
+                    </ul>
+                </div>
+
+                <div class="example">
+                    <h4>3. Data Transformation</h4>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Normalize or standardize data</li>
+                        <li>Convert data types</li>
+                        <li>Create derived variables</li>
+                        <li>Aggregate data when needed</li>
+                    </ul>
+                </div>
+
+                <div class="exercise">
+                    <h4>Exercise 1: Identifying Data Issues</h4>
+                    <p>Below is a raw dataset of student exam scores. Identify at least 3 data quality issues:</p>
+                    
+                    <table>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Score</th>
+                            <th>Grade</th>
+                        </tr>
+                        <tr>
+                            <td>101</td>
+                            <td>Alice</td>
+                            <td>85</td>
+                            <td>B</td>
+                        </tr>
+                        <tr>
+                            <td>102</td>
+                            <td>Bob</td>
+                            <td>92</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>103</td>
+                            <td>Charlie</td>
+                            <td>-5</td>
+                            <td>F</td>
+                        </tr>
+                        <tr>
+                            <td>102</td>
+                            <td>Bob</td>
+                            <td>92</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>104</td>
+                            <td>Diana</td>
+                            <td></td>
+                            <td>C</td>
+                        </tr>
+                        <tr>
+                            <td>105</td>
+                            <td>Eve</td>
+                            <td>150</td>
+                            <td>A+</td>
+                        </tr>
+                    </table>
+
+                    <textarea id="dataIssues" rows="4" placeholder="List the data quality issues you found..."></textarea>
+                    <button class="check-btn" onclick="checkDataIssues()">Check Answer</button>
+                    <div id="dataIssuesFeedback" class="feedback"></div>
+                </div>
+
+                <div class="exercise">
+                    <h4>Exercise 2: Handling Missing Data</h4>
+                    <p>You have the following dataset with a missing value. What would you do?</p>
+                    <p><strong>Dataset:</strong> [23, 25, 27, ?, 30, 32, 28]</p>
+                    
+                    <p>Calculate the mean to impute the missing value:</p>
+                    <input type="number" id="missingValue" placeholder="Enter the imputed value">
+                    <button class="check-btn" onclick="checkMissingValue()">Check Answer</button>
+                    <div id="missingValueFeedback" class="feedback"></div>
+                </div>
+            </div>
+
+            <!-- Data Presentation Section -->
+            <div id="presentation" class="section">
+                <h2>2. Data Presentation</h2>
+
+                <h3>2.1 Tabular Presentation</h3>
+                
+                <div class="concept-box">
+                    <p>Tables organize data in rows and columns, making it easy to read and compare values. Types include:</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>Frequency Distribution:</strong> Shows how often each value occurs</li>
+                        <li><strong>Grouped Frequency Distribution:</strong> Groups data into intervals (classes)</li>
+                        <li><strong>Cross-tabulation:</strong> Shows relationship between two variables</li>
+                    </ul>
+                </div>
+
+                <div class="example">
+                    <h4>Example: Frequency Distribution Table</h4>
+                    <table>
+                        <tr>
+                            <th>Score Range</th>
+                            <th>Frequency</th>
+                            <th>Relative Frequency</th>
+                            <th>Cumulative Frequency</th>
+                        </tr>
+                        <tr>
+                            <td>0-20</td>
+                            <td>5</td>
+                            <td>10%</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td>21-40</td>
+                            <td>12</td>
+                            <td>24%</td>
+                            <td>17</td>
+                        </tr>
+                        <tr>
+                            <td>41-60</td>
+                            <td>18</td>
+                            <td>36%</td>
+                            <td>35</td>
+                        </tr>
+                        <tr>
+                            <td>61-80</td>
+                            <td>10</td>
+                            <td>20%</td>
+                            <td>45</td>
+                        </tr>
+                        <tr>
+                            <td>81-100</td>
+                            <td>5</td>
+                            <td>10%</td>
+                            <td>50</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <h3>2.2 Graphical Presentation</h3>
+
+                <div class="data-input-area">
+                    <h4>Interactive Chart Creator</h4>
+                    <p>Enter comma-separated values to create different chart types:</p>
+                    <input type="text" id="chartData" placeholder="e.g., 23, 45, 67, 34, 56, 78, 23, 45" value="23, 45, 67, 34, 56, 78, 23, 45, 89, 12">
+                    
+                    <div style="margin-top: 15px;">
+                        <button class="submit-btn" onclick="createHistogram()">Histogram</button>
+                        <button class="submit-btn" onclick="createBarChart()">Bar Chart</button>
+                        <button class="submit-btn" onclick="createLineChart()">Line Chart</button>
+                        <button class="submit-btn" onclick="createPieChart()">Pie Chart</button>
+                    </div>
+                </div>
+
+                <div class="interactive-chart">
+                    <canvas id="mainChart"></canvas>
+                </div>
+
+                <div class="tip">
+                    <strong>💡 Chart Selection Guide:</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>Histogram:</strong> Distribution of continuous data</li>
+                        <li><strong>Bar Chart:</strong> Comparing categories</li>
+                        <li><strong>Line Chart:</strong> Trends over time</li>
+                        <li><strong>Pie Chart:</strong> Parts of a whole (percentages)</li>
+                    </ul>
+                </div>
+
+                <div class="exercise">
+                    <h4>Exercise 3: Choose the Right Chart</h4>
+                    <p>Match each scenario with the most appropriate chart type:</p>
+                    
+                    <p>1. Showing monthly sales over a year:</p>
+                    <select id="q1" style="width: 100%; padding: 10px; margin: 10px 0;">
+                        <option value="">Select...</option>
+                        <option value="line">Line Chart</option>
+                        <option value="bar">Bar Chart</option>
+                        <option value="pie">Pie Chart</option>
+                        <option value="histogram">Histogram</option>
+                    </select>
+
+                    <p>2. Showing market share of different companies:</p>
+                    <select id="q2" style="width: 100%; padding: 10px; margin: 10px 0;">
+                        <option value="">Select...</option>
+                        <option value="line">Line Chart</option>
+                        <option value="bar">Bar Chart</option>
+                        <option value="pie">Pie Chart</option>
+                        <option value="histogram">Histogram</option>
+                    </select>
+
+                    <p>3. Showing distribution of student ages:</p>
+                    <select id="q3" style="width: 100%; padding: 10px; margin: 10px 0;">
+                        <option value="">Select...</option>
+                        <option value="line">Line Chart</option>
+                        <option value="bar">Bar Chart</option>
+                        <option value="pie">Pie Chart</option>
+                        <option value="histogram">Histogram</option>
+                    </select>
+
+                    <button class="check-btn" onclick="checkChartQuiz()">Check Answers</button>
+                    <div id="chartQuizFeedback" class="feedback"></div>
+                </div>
+            </div>
+
+            <!-- Central Tendency Section -->
+            <div id="central" class="section">
+                <h2>3. Measures of Central Tendency</h2>
+
+                <div class="concept-box">
+                    <p>Measures of central tendency identify the center or typical value of a dataset. The three main measures are:</p>
+                </div>
+
+                <h3>3.1 Mean (Average)</h3>
+                <div class="formula">
+                    Mean = Σx / n
+                    <br>
+                    <small>Sum of all values divided by the number of values</small>
+                </div>
+
+                <div class="example">
+                    <h4>Example:</h4>
+                    <p>Dataset: [10, 20, 30, 40, 50]</p>
+                    <p>Mean = (10 + 20 + 30 + 40 + 50) / 5 = 150 / 5 = <strong>30</strong></p>
+                </div>
+
+                <h3>3.2 Median (Middle Value)</h3>
+                <div class="concept-box">
+                    <p><strong>Step 1:</strong> Arrange data in ascending order</p>
+                    <p><strong>Step 2:</strong> Find the middle value</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>If n is odd: Median = middle value</li>
+                        <li>If n is even: Median = average of two middle values</li>
+                    </ul>
+                </div>
+
+                <div class="example">
+                    <h4>Example:</h4>
+                    <p>Dataset: [12, 15, 18, 20, 25]</p>
+                    <p>Median = <strong>18</strong> (middle value)</p>
+                </div>
+
+                <h3>3.3 Mode (Most Frequent)</h3>
+                <div class="concept-box">
+                    <p>The value that appears most frequently in the dataset.</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>Unimodal:</strong> One mode</li>
+                        <li><strong>Bimodal:</strong> Two modes</li>
+                        <li><strong>Multimodal:</strong> More than two modes</li>
+                    </ul>
+                </div>
+
+                <div class="data-input-area">
+                    <h4>Interactive Calculator</h4>
+                    <p>Enter comma-separated numbers to calculate central tendency:</p>
+                    <input type="text" id="centralData" placeholder="e.g., 12, 15, 18, 20, 22, 18, 25" value="12, 15, 18, 20, 22, 18, 25, 30">
+                    <button class="submit-btn" onclick="calculateCentral()">Calculate</button>
+                </div>
+
+                <div id="centralResults" class="stats-output" style="display: none;">
+                    <h4>Results:</h4>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h4>MEAN</h4>
+                            <div class="value" id="meanValue">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>MEDIAN</h4>
+                            <div class="value" id="medianValue">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>MODE</h4>
+                            <div class="value" id="modeValue">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <h4>Exercise 4: Calculate Central Tendency</h4>
+                    <p>Given the dataset: <strong>[5, 8, 12, 8, 15, 20, 8, 25]</strong></p>
+                    
+                    <p>Calculate the mean:</p>
+                    <input type="number" id="meanEx" placeholder="Enter mean" step="0.01">
+                    
+                    <p>Calculate the median:</p>
+                    <input type="number" id="medianEx" placeholder="Enter median" step="0.01">
+                    
+                    <p>What is the mode?</p>
+                    <input type="number" id="modeEx" placeholder="Enter mode">
+                    
+                    <button class="check-btn" onclick="checkCentralEx()">Check Answers</button>
+                    <div id="centralExFeedback" class="feedback"></div>
+                </div>
+
+                <div class="tip">
+                    <strong>💡 When to Use Which Measure:</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>Mean:</strong> Best for symmetric distributions without outliers</li>
+                        <li><strong>Median:</strong> Best for skewed distributions or data with outliers</li>
+                        <li><strong>Mode:</strong> Best for categorical data or finding the most common value</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Dispersion Section -->
+            <div id="dispersion" class="section">
+                <h2>4. Measures of Dispersion</h2>
+
+                <div class="concept-box">
+                    <p>Measures of dispersion describe how spread out the data is. They show the variability in the dataset.</p>
+                </div>
+
+                <h3>4.1 Range</h3>
+                <div class="formula">
+                    Range = Maximum Value - Minimum Value
+                </div>
+
+                <h3>4.2 Variance</h3>
+                <div class="formula">
+                    Variance (σ²) = Σ(x - μ)² / n
+                    <br>
+                    <small>Average of squared deviations from the mean</small>
+                </div>
+
+                <h3>4.3 Standard Deviation</h3>
+                <div class="formula">
+                    Standard Deviation (σ) = √Variance
+                    <br>
+                    <small>Square root of variance</small>
+                </div>
+
+                <h3>4.4 Coefficient of Variation</h3>
+                <div class="formula">
+                    CV = (Standard Deviation / Mean) × 100%
+                    <br>
+                    <small>Relative measure of dispersion</small>
+                </div>
+
+                <div class="example">
+                    <h4>Example Calculation:</h4>
+                    <p>Dataset: [2, 4, 6, 8, 10]</p>
+                    <p><strong>Mean:</strong> 6</p>
+                    <p><strong>Range:</strong> 10 - 2 = 8</p>
+                    <p><strong>Variance:</strong> [(2-6)² + (4-6)² + (6-6)² + (8-6)² + (10-6)²] / 5 = 40/5 = 8</p>
+                    <p><strong>Standard Deviation:</strong> √8 ≈ 2.83</p>
+                </div>
+
+                <div class="data-input-area">
+                    <h4>Interactive Dispersion Calculator</h4>
+                    <p>Enter comma-separated numbers:</p>
+                    <input type="text" id="dispersionData" placeholder="e.g., 10, 12, 15, 18, 20, 22" value="10, 12, 15, 18, 20, 22, 25">
+                    <button class="submit-btn" onclick="calculateDispersion()">Calculate</button>
+                </div>
+
+                <div id="dispersionResults" class="stats-output" style="display: none;">
+                    <h4>Results:</h4>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h4>RANGE</h4>
+                            <div class="value" id="rangeValue">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>VARIANCE</h4>
+                            <div class="value" id="varianceValue">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>STD DEV</h4>
+                            <div class="value" id="stdDevValue">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>CV</h4>
+                            <div class="value" id="cvValue">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <h4>Exercise 5: Understanding Dispersion</h4>
+                    <p>Consider two datasets:</p>
+                    <p><strong>Dataset A:</strong> [50, 50, 50, 50, 50]</p>
+                    <p><strong>Dataset B:</strong> [30, 40, 50, 60, 70]</p>
+                    
+                    <p>Which dataset has higher dispersion?</p>
+                    <select id="dispersionQ" style="width: 100%; padding: 10px; margin: 10px 0;">
+                        <option value="">Select...</option>
+                        <option value="A">Dataset A</option>
+                        <option value="B">Dataset B</option>
+                        <option value="same">Both have the same dispersion</option>
+                    </select>
+                    
+                    <button class="check-btn" onclick="checkDispersionQ()">Check Answer</button>
+                    <div id="dispersionQFeedback" class="feedback"></div>
+                </div>
+
+                <div class="exercise">
+                    <h4>Exercise 6: Calculate Standard Deviation</h4>
+                    <p>Given the dataset: <strong>[4, 8, 6, 5, 3]</strong></p>
+                    
+                    <p>Step 1: Calculate the mean</p>
+                    <input type="number" id="sdMean" placeholder="Enter mean" step="0.01">
+                    
+                    <p>Step 2: Calculate the variance</p>
+                    <input type="number" id="sdVariance" placeholder="Enter variance" step="0.01">
+                    
+                    <p>Step 3: Calculate the standard deviation</p>
+                    <input type="number" id="sdStdDev" placeholder="Enter standard deviation" step="0.01">
+                    
+                    <button class="check-btn" onclick="checkSDEx()">Check Answers</button>
+                    <div id="sdExFeedback" class="feedback"></div>
+                </div>
+
+                <div class="tip">
+                    <strong>💡 Interpreting Standard Deviation:</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Small SD → Data points are close to the mean (low variability)</li>
+                        <li>Large SD → Data points are spread out (high variability)</li>
+                        <li>SD = 0 → All values are identical</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Statistical Software Section -->
+            <div id="software" class="section">
+                <h2>5. Statistical Software</h2>
+
+                <div class="concept-box">
+                    <h3>Popular Statistical Software Tools</h3>
+                    <p>Modern data analysis relies heavily on software tools that automate calculations and provide advanced features.</p>
+                </div>
+
+                <h3>5.1 Common Software Options</h3>
+
+                <div class="example">
+                    <h4>1. Spreadsheet Software (Excel, Google Sheets)</h4>
+                    <p><strong>Best for:</strong> Basic statistics, small datasets, business analysis</p>
+                    <p><strong>Key Functions:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li><code>=AVERAGE(range)</code> - Calculate mean</li>
+                        <li><code>=MEDIAN(range)</code> - Calculate median</li>
+                        <li><code>=MODE(range)</code> - Calculate mode</li>
+                        <li><code>=STDEV(range)</code> - Calculate standard deviation</li>
+                        <li><code>=VAR(range)</code> - Calculate variance</li>
+                    </ul>
+                </div>
+
+                <div class="example">
+                    <h4>2. Python (with pandas, numpy, matplotlib)</h4>
+                    <p><strong>Best for:</strong> Large datasets, automation, machine learning</p>
+                    <p><strong>Sample Code:</strong></p>
+                    <pre style="background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto;">
+import pandas as pd
+import numpy as np
+
+# Load data
+data = [12, 15, 18, 20, 22, 18, 25, 30]
+
+# Calculate statistics
+mean = np.mean(data)
+median = np.median(data)
+std_dev = np.std(data)
+variance = np.var(data)
+
+print(f"Mean: {mean}")
+print(f"Median: {median}")
+print(f"Standard Deviation: {std_dev}")
+                    </pre>
+                </div>
+
+                <div class="example">
+                    <h4>3. R Programming</h4>
+                    <p><strong>Best for:</strong> Statistical analysis, research, academic work</p>
+                    <p><strong>Sample Code:</strong></p>
+                    <pre style="background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto;">
+# Create dataset
+data <- c(12, 15, 18, 20, 22, 18, 25, 30)
+
+# Calculate statistics
+mean_value <- mean(data)
+median_value <- median(data)
+sd_value <- sd(data)
+var_value <- var(data)
+
+# Display results
+summary(data)
+                    </pre>
+                </div>
+
+                <div class="example">
+                    <h4>4. SPSS (Statistical Package for Social Sciences)</h4>
+                    <p><strong>Best for:</strong> Social sciences research, survey analysis</p>
+                    <p><strong>Features:</strong> Point-and-click interface, extensive statistical tests, report generation</p>
+                </div>
+
+                <div class="exercise">
+                    <h4>Exercise 7: Excel Functions</h4>
+                    <p>Match each Excel function with its purpose:</p>
+                    
+                    <p>1. =AVERAGE(A1:A10)</p>
+                    <select id="excel1" style="width: 100%; padding: 10px; margin: 10px 0;">
+                        <option value="">Select...</option>
+                        <option value="mean">Calculates mean</option>
+                        <option value="median">Calculates median</option>
+                        <option value="mode">Calculates mode</option>
+                        <option value="range">Calculates range</option>
+                    </select>
+
+                    <p>2. =STDEV(A1:A10)</p>
+                    <select id="excel2" style="width: 100%; padding: 10px; margin: 10px 0;">
+                        <option value="">Select...</option>
+                        <option value="mean">Calculates mean</option>
+                        <option value="std">Calculates standard deviation</option>
+                        <option value="var">Calculates variance</option>
+                        <option value="range">Calculates range</option>
+                    </select>
+
+                    <p>3. =MAX(A1:A10)-MIN(A1:A10)</p>
+                    <select id="excel3" style="width: 100%; padding: 10px; margin: 10px 0;">
+                        <option value="">Select...</option>
+                        <option value="mean">Calculates mean</option>
+                        <option value="median">Calculates median</option>
+                        <option value="range">Calculates range</option>
+                        <option value="std">Calculates standard deviation</option>
+                    </select>
+
+                    <button class="check-btn" onclick="checkExcelQuiz()">Check Answers</button>
+                    <div id="excelQuizFeedback" class="feedback"></div>
+                </div>
+
+                <div class="tip">
+                    <strong>💡 Choosing the Right Tool:</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>Small datasets + Quick analysis:</strong> Excel/Google Sheets</li>
+                        <li><strong>Large datasets + Automation:</strong> Python/R</li>
+                        <li><strong>Academic research:</strong> SPSS/R</li>
+                        <li><strong>Business intelligence:</strong> Tableau/Power BI</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Final Quiz Section -->
+            <div id="final" class="section">
+                <h2>📝 Final Assessment Quiz</h2>
+
+                <div class="concept-box">
+                    <p>Test your understanding of descriptive statistics! This comprehensive quiz covers all topics.</p>
+                </div>
+
+                <div class="exercise">
+                    <h4>Question 1: Data Preparation</h4>
+                    <p>What is the first step in data analysis?</p>
+                    <select id="final1" style="width: 100%; padding: 10px; margin: 10px 0;">
+                        <option value="">Select...</option>
+                        <option value="collect">Data Collection</option>
+                        <option value="clean">Data Cleaning</option>
+                        <option value="analyze">Data Analysis</option>
+                        <option value="present">Data Presentation</option>
+                    </select>
+                </div>
+
+                <div class="exercise">
+                    <h4>Question 2: Central Tendency</h4>
+                    <p>Which measure of central tendency is most affected by outliers?</p>
+                    <select id="final2" style="width: 100%; padding: 10px; margin: 10px 0;">
+                        <option value="">Select...</option>
+                        <option value="mean">Mean</option>
+                        <option value="median">Median</option>
+                        <option value="mode">Mode</option>
+                    </select>
+                </div>
+
+                <div class="exercise">
+                    <h4>Question 3: Dispersion</h4>
+                    <p>If all values in a dataset are the same, what is the standard deviation?</p>
+                    <input type="number" id="final3" placeholder="Enter value" style="width: 100%; padding: 10px; margin: 10px 0;">
+                </div>
+
+                <div class="exercise">
+                    <h4>Question 4: Data Visualization</h4>
+                    <p>Which chart is best for showing the distribution of continuous data?</p>
+                    <select id="final4" style="width: 100%; padding: 10px; margin: 10px 0;">
+                        <option value="">Select...</option>
+                        <option value="bar">Bar Chart</option>
+                        <option value="histogram">Histogram</option>
+                        <option value="pie">Pie Chart</option>
+                        <option value="line">Line Chart</option>
+                    </select>
+                </div>
+
+                <div class="exercise">
+                    <h4>Question 5: Calculation Challenge</h4>
+                    <p>Calculate the mean of: [6, 8, 10, 12, 14]</p>
+                    <input type="number" id="final5" placeholder="Enter mean" step="0.01" style="width: 100%; padding: 10px; margin: 10px 0;">
+                </div>
+
+                <div class="exercise">
+                    <h4>Question 6: Software Knowledge</h4>
+                    <p>Which Excel function calculates the median?</p>
+                    <select id="final6" style="width: 100%; padding: 10px; margin: 10px 0;">
+                        <option value="">Select...</option>
+                        <option value="average">=AVERAGE()</option>
+                        <option value="median">=MEDIAN()</option>
+                        <option value="mode">=MODE()</option>
+                        <option value="mid">=MID()</option>
+                    </select>
+                </div>
+
+                <button class="submit-btn" onclick="gradeFinalQuiz()" style="width: 100%; padding: 15px; font-size: 1.2em; margin-top: 20px;">Submit Final Quiz</button>
+                <div id="finalQuizFeedback" class="feedback"></div>
+                
+                <div id="finalScore" style="display: none; margin-top: 20px; text-align: center;">
+                    <h3>Your Score</h3>
+                    <div style="font-size: 3em; color: #667eea; font-weight: bold; margin: 20px 0;" id="scoreDisplay">0/6</div>
+                    <div id="scoreMessage" style="font-size: 1.2em; margin: 20px 0;"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let currentChart = null;
+        let completedExercises = new Set();
+
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('nav button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+            
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const total = 7;
+            const completed = completedExercises.size;
+            const percentage = Math.round((completed / total) * 100);
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = percentage + '%';
+        }
+
+        // Exercise 1: Data Issues
+        function checkDataIssues() {
+            const answer = document.getElementById('dataIssues').value.toLowerCase();
+            const feedback = document.getElementById('dataIssuesFeedback');
+            
+            const keywords = ['duplicate', 'negative', 'missing', 'invalid', 'outlier', '150'];
+            const foundIssues = keywords.filter(keyword => answer.includes(keyword));
+            
+            if (foundIssues.length >= 3) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = '✓ Excellent! You identified the key issues: duplicate record (Bob), negative score (Charlie), missing value (Diana), and impossible score (Eve - 150 exceeds maximum).';
+                completedExercises.add('ex1');
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = '✗ Look closer! There are at least 4 issues: a duplicate record, a negative score, a missing value, and an impossible score above 100.';
+            }
+            updateProgress();
+        }
+
+        // Exercise 2: Missing Value
+        function checkMissingValue() {
+            const answer = parseFloat(document.getElementById('missingValue').value);
+            const feedback = document.getElementById('missingValueFeedback');
+            const correctAnswer = 27.5;
+            
+            if (Math.abs(answer - correctAnswer) < 0.1) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = '✓ Correct! The mean is 27.5. Calculation: (23+25+27+30+32+28)/6 = 165/6 = 27.5';
+                completedExercises.add('ex2');
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = '✗ Not quite. Calculate the mean of the available values: (23+25+27+30+32+28)/6';
+            }
+            updateProgress();
+        }
+
+        // Chart functions
+        function parseData(dataString) {
+            return dataString.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
+        }
+
+        function createHistogram() {
+            const data = parseData(document.getElementById('chartData').value);
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            
+            if (currentChart) currentChart.destroy();
+            
+            currentChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map((_, i) => `Value ${i + 1}`),
+                    datasets: [{
+                        label: 'Frequency',
+                        data: data,
+                        backgroundColor: 'rgba(102, 126, 234, 0.6)',
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Histogram',
+                            font: { size: 18 }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createBarChart() {
+            const data = parseData(document.getElementById('chartData').value);
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            
+            if (currentChart) currentChart.destroy();
+            
+            currentChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map((_, i) => `Cat ${i + 1}`),
+                    datasets: [{
+                        label: 'Values',
+                        data: data,
+                        backgroundColor: 'rgba(118, 75, 162, 0.6)',
+                        borderColor: 'rgba(118, 75, 162, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Bar Chart',
+                            font: { size: 18 }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createLineChart() {
+            const data = parseData(document.getElementById('chartData').value);
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            
+            if (currentChart) currentChart.destroy();
+            
+            currentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map((_, i) => `Point ${i + 1}`),
+                    datasets: [{
+                        label: 'Trend',
+                        data: data,
+                        borderColor: 'rgba(40, 167, 69, 1)',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Line Chart',
+                            font: { size: 18 }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createPieChart() {
+            const data = parseData(document.getElementById('chartData').value);
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            
+            if (currentChart) currentChart.destroy();
+            
+            const colors = [
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(153, 102, 255, 0.6)',
+                'rgba(255, 159, 64, 0.6)'
+            ];
+            
+            currentChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: data.map((_, i) => `Segment ${i + 1}`),
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors.slice(0, data.length),
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Pie Chart',
+                            font: { size: 18 }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Exercise 3: Chart Quiz
+        function checkChartQuiz() {
+            const q1 = document.getElementById('q1').value;
+            const q2 = document.getElementById('q2').value;
+            const q3 = document.getElementById('q3').value;
+            const feedback = document.getElementById('chartQuizFeedback');
+            
+            if (q1 === 'line' && q2 === 'pie' && q3 === 'histogram') {
+                feedback.className = 'feedback correct';
+                feedback.textContent = '✓ Perfect! Line charts show trends over time, pie charts show proportions, and histograms show distributions.';
+                completedExercises.add('ex3');
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = '✗ Review the chart types. Think about: trends over time, parts of a whole, and distributions.';
+            }
+            updateProgress();
+        }
+
+        // Central Tendency Calculator
+        function calculateCentral() {
+            const data = parseData(document.getElementById('centralData').value);
+            
+            const mean = data.reduce((a, b) => a + b, 0) / data.length;
+            
+            const sorted = [...data].sort((a, b) => a - b);
+            const median = sorted.length % 2 === 0
+                ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
+                : sorted[Math.floor(sorted.length / 2)];
+            
+            const frequency = {};
+            data.forEach(val => frequency[val] = (frequency[val] || 0) + 1);
+            const maxFreq = Math.max(...Object.values(frequency));
+            const modes = Object.keys(frequency).filter(key => frequency[key] === maxFreq);
+            const mode = modes.length === data.length ? 'No mode' : modes.join(', ');
+            
+            document.getElementById('meanValue').textContent = mean.toFixed(2);
+            document.getElementById('medianValue').textContent = median.toFixed(2);
+            document.getElementById('modeValue').textContent = mode;
+            document.getElementById('centralResults').style.display = 'block';
+        }
+
+        // Exercise 4: Central Tendency
+        function checkCentralEx() {
+            const meanAns = parseFloat(document.getElementById('meanEx').value);
+            const medianAns = parseFloat(document.getElementById('medianEx').value);
+            const modeAns = parseFloat(document.getElementById('modeEx').value);
+            const feedback = document.getElementById('centralExFeedback');
+            
+            const correctMean = 12.625;
+            const correctMedian = 8;
+            const correctMode = 8;
+            
+            if (Math.abs(meanAns - correctMean) < 0.1 && 
+                Math.abs(medianAns - correctMedian) < 0.1 && 
+                modeAns === correctMode) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = '✓ Excellent! Mean = 12.625, Median = 8, Mode = 8';
+                completedExercises.add('ex4');
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = '✗ Check your calculations. Mean = sum/n = 101/8, Median = middle values of sorted data, Mode = most frequent.';
+            }
+            updateProgress();
+        }
+
+        // Dispersion Calculator
+        function calculateDispersion() {
+            const data = parseData(document.getElementById('dispersionData').value);
+            
+            const mean = data.reduce((a, b) => a + b, 0) / data.length;
+            const range = Math.max(...data) - Math.min(...data);
+            
+            const variance = data.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / data.length;
+            const stdDev = Math.sqrt(variance);
+            const cv = (stdDev / mean) * 100;
+            
+            document.getElementById('rangeValue').textContent = range.toFixed(2);
+            document.getElementById('varianceValue').textContent = variance.toFixed(2);
+            document.getElementById('stdDevValue').textContent = stdDev.toFixed(2);
+            document.getElementById('cvValue').textContent = cv.toFixed(2) + '%';
+            document.getElementById('dispersionResults').style.display = 'block';
+        }
+
+        // Exercise 5: Dispersion Question
+        function checkDispersionQ() {
+            const answer = document.getElementById('dispersionQ').value;
+            const feedback = document.getElementById('dispersionQFeedback');
+            
+            if (answer === 'B') {
+                feedback.className = 'feedback correct';
+                feedback.textContent = '✓ Correct! Dataset B has higher dispersion because its values are spread out, while Dataset A has no variation at all (all values are identical).';
+                completedExercises.add('ex5');
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = '✗ Think about it: Dataset A has all identical values (no spread), while Dataset B values vary from 30 to 70.';
+            }
+            updateProgress();
+        }
+
+        // Exercise 6: Standard Deviation
+        function checkSDEx() {
+            const meanAns = parseFloat(document.getElementById('sdMean').value);
+            const varAns = parseFloat(document.getElementById('sdVariance').value);
+            const sdAns = parseFloat(document.getElementById('sdStdDev').value);
+            const feedback = document.getElementById('sdExFeedback');
+            
+            const correctMean = 5.2;
+            const correctVar = 3.36;
+            const correctSD = 1.83;
+            
+            if (Math.abs(meanAns - correctMean) < 0.1 && 
+                Math.abs(varAns - correctVar) < 0.1 && 
+                Math.abs(sdAns - correctSD) < 0.1) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = '✓ Perfect! Mean = 5.2, Variance = 3.36, Standard Deviation = 1.83';
+                completedExercises.add('ex6');
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = '✗ Review the steps: 1) Mean = (4+8+6+5+3)/5, 2) Variance = Σ(x-mean)²/n, 3) SD = √variance';
+            }
+            updateProgress();
+        }
+
+        // Exercise 7: Excel Quiz
+        function checkExcelQuiz() {
+            const q1 = document.getElementById('excel1').value;
+            const q2 = document.getElementById('excel2').value;
+            const q3 = document.getElementById('excel3').value;
+            const feedback = document.getElementById('excelQuizFeedback');
+            
+            if (q1 === 'mean' && q2 === 'std' && q3 === 'range') {
+                feedback.className = 'feedback correct';
+                feedback.textContent = '✓ Excellent! You understand Excel statistical functions well!';
+                completedExercises.add('ex7');
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = '✗ Review: AVERAGE calculates mean, STDEV calculates standard deviation, MAX-MIN calculates range.';
+            }
+            updateProgress();
+        }
+
+        // Final Quiz
+        function gradeFinalQuiz() {
+            const q1 = document.getElementById('final1').value;
+            const q2 = document.getElementById('final2').value;
+            const q3 = parseFloat(document.getElementById('final3').value);
+            const q4 = document.getElementById('final4').value;
+            const q5 = parseFloat(document.getElementById('final5').value);
+            const q6 = document.getElementById('final6').value;
+            
+            let score = 0;
+            
+            if (q1 === 'collect') score++;
+            if (q2 === 'mean') score++;
+            if (q3 === 0) score++;
+            if (q4 === 'histogram') score++;
+            if (Math.abs(q5 - 10) < 0.1) score++;
+            if (q6 === 'median') score++;
+            
+            const feedback = document.getElementById('finalQuizFeedback');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const scoreMessage = document.getElementById('scoreMessage');
+            const finalScore = document.getElementById('finalScore');
+            
+            scoreDisplay.textContent = score + '/6';
+            finalScore.style.display = 'block';
+            
+            if (score === 6) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = '🎉 Perfect Score! You have mastered descriptive statistics!';
+                scoreMessage.textContent = 'Outstanding! You have excellent understanding of all concepts.';
+                scoreMessage.style.color = '#28a745';
+            } else if (score >= 4) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = '✓ Great job! You passed the assessment.';
+                scoreMessage.textContent = 'Good work! Review the topics you missed to strengthen your knowledge.';
+                scoreMessage.style.color = '#28a745';
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = '✗ Keep studying. Review the material and try again.';
+                scoreMessage.textContent = 'You need more practice. Go back through the lessons and exercises.';
+                scoreMessage.style.color = '#dc3545';
+            }
+        }
+
+        // Initialize
+        window.onload = function() {
+            createHistogram();
+        };
+    </script>
+</body>
+</html>
